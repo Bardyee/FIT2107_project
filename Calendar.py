@@ -68,38 +68,30 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
     
     # Add your methods here.
-
-def get_future_events(api, current_time):
-    """
-    Gets all events from at least 2 years in the future
-    """
-    future_time = current_time + datetime.relativedelta(years=2)
-    events_result = api.events().list(calendarId='primary', timeMin=current_time,
-                                  timeMax=future_time, singleEvents=True,
-                                  orderBy='startTime').execute()
-    return events_result.get('items', [])
-
-def get_past_events(api, current_time):
-    """
-    Gets all events from at least 5 years in the past
-    """
-    past_time = current_time - datetime.relativedelta(years=5)
-    events_result = api.events().list(calendarId='primary', timeMin=past_time,
-                                  timeMax=current_time, singleEvents=True,
-                                  orderBy='startTime').execute()
-    return events_result.get('items', [])
-
 def get_all_events(api, current_time):
     """
     Gets all events from at least 5 years in the past and at least 2 years in the future
     """
-    return get_past_events(api, current_time) + get_future_events(api, current_time)
+    str_of_current_date = current_time[:10] # takes just YYYY-MM-DD
+    future_year = str(int(current_time[:4]) + 2) # takes the current year and +2
+    future_date = future_year + current_time[4:]
+    past_year = str(int(current_time[:4]) - 5) # takes the current year and -5
+    past_date = past_year + current_time[4:]
+    events_result = api.events().list(calendarId='primary', timeMin=past_date,
+                                  timeMax=future_date, singleEvents=True,
+                                  orderBy='startTime').execute()
+    return events_result.get('items', [])
+
+    # self recording some methods
+    # convert str to date
+    # x = datetime.date.fromisoformat(str_of_current_date) where str_of_current_date in YYYY-MM-DD
 
 def main():
     api = get_calendar_api()
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 
-    events = get_upcoming_events(api, time_now, 10)
+    # events = get_upcoming_events(api, time_now, 10)
+    events = get_all_events(api, time_now)
 
     if not events:
         print('No upcoming events found.')
