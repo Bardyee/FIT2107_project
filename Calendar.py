@@ -18,6 +18,7 @@ from __future__ import print_function
 import datetime
 import pickle
 import os.path
+import calendar
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -69,6 +70,7 @@ def get_upcoming_events(api, starting_time, number_of_events):
     
     # Add your methods here.
 def get_all_events(api, current_time):
+    # line coverage
     """
     Gets all events from at least 5 years in the past and at least 2 years in the future
     """
@@ -90,7 +92,76 @@ def get_events_with_input(api):
     """
     Gets all events from date specified
     """
-    date = str(input("Input date in YYYY-MM-DD format: "))
+    date = ""
+    valid_date=False
+
+    while not valid_date:
+        date = input("Input date in YYYY-MM-DD format: ")
+
+        # checks if format is XXXX-XX-XX
+        if len(date)!=10 or date[4]!="-" or date[7]!="-":
+            print("Invalid date, please try again")
+            print(len(date))
+            print(date[5])
+            print(date[8])
+            continue
+        
+        # checks if valid year
+        try:
+            int(date[:4])
+        except ValueError:
+            print("Invalid year input, please try again")
+            continue
+        else:
+            if int(date[:4])<0 or int(date[:4])>9999:
+                print("Invalid year input, please try again")
+                continue
+        
+        # checks if valid month
+        try:
+            int(date[5:7])
+        except ValueError:
+            print("Invalid month input, please try again")
+            continue
+        else:
+            if int(date[5:7])<0 or int(date[5:7])>12:
+                print("Invalid month input, please try again")
+                continue
+        
+        # checks if valid day
+        try:
+            int(date[8:10])
+        except ValueError:
+            print("Invalid day input, please try again")
+            continue
+        else:
+            # if Feb
+            if int(date[5:7]) == 2:
+                # if leap year:
+                if int(date[:4])% 4==0 and (int(date[:4])%100!=0 or int(date[:4])%400==0):
+                    if int(date[8:10])<0 or int(date[8:10])>29:
+                        print("Invalid day input, please try again")
+                        continue
+                # if not leap year
+                else:
+                    if int(date[8:10])<0 or int(date[8:10])>28:
+                        print("Invalid day input, please try again")
+                        continue
+
+            # if Apr, Jun, Sep, Nov
+            elif int(date[5:7]) == 4 or int(date[5:7]) == 6 or int(date[5:7]) == 9 or int(date[5:7]) == 11:
+                if int(date[8:10])<0 or int(date[8:10])>30:
+                    print("Invalid day input, please try again")
+                    continue
+
+            # if Jan, Mar, May, Jul, Aug, Oct, Dec
+            else:
+                if int(date[8:10])<0 or int(date[8:10])>31:
+                    print("Invalid day input, please try again")
+                    continue
+
+        valid_date=True
+
     start_of_date = date + "T00:00:00Z"
     end_of_date = date + "T23:59:59Z"
     events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
