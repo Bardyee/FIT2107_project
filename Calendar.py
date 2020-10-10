@@ -86,12 +86,25 @@ def get_all_events(api, current_time):
     # convert str to date
     # x = datetime.date.fromisoformat(str_of_current_date) where str_of_current_date in YYYY-MM-DD
 
+def get_events_with_input(api):
+    """
+    Gets all events from date specified
+    """
+    date = str(input("Input date in YYYY-MM-DD format: "))
+    start_of_date = date + "T00:00:00Z"
+    end_of_date = date + "T23:59:59Z"
+    events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
+                                  timeMax=end_of_date, singleEvents=True,
+                                  orderBy='startTime').execute()
+    return events_result.get('items', [])
+
 def main():
     api = get_calendar_api()
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 
     # events = get_upcoming_events(api, time_now, 10)
-    events = get_all_events(api, time_now)
+    # events = get_all_events(api, time_now)
+    events = get_events_with_input(api)
 
     if not events:
         print('No upcoming events found.')
