@@ -88,87 +88,6 @@ def get_all_events(api, current_time):
     # convert str to date
     # x = datetime.date.fromisoformat(str_of_current_date) where str_of_current_date in YYYY-MM-DD
 
-# def get_events_with_input(api):
-#     """
-#     Gets all events from date specified
-#     """
-#     date = ""
-#     valid_date=False
-
-#     while not valid_date:
-#         date = input("Input date in YYYY-MM-DD format: ")
-
-#         # checks if format is XXXX-XX-XX
-#         if len(date)!=10 or date[4]!="-" or date[7]!="-":
-#             print("Invalid date, please try again")
-#             print(len(date))
-#             print(date[5])
-#             print(date[8])
-#             continue
-        
-#         # checks if valid year
-#         try:
-#             int(date[:4])
-#         except ValueError:
-#             print("Invalid year input, please try again")
-#             continue
-#         else:
-#             if int(date[:4])<0 or int(date[:4])>9999:
-#                 print("Invalid year input, please try again")
-#                 continue
-        
-#         # checks if valid month
-#         try:
-#             int(date[5:7])
-#         except ValueError:
-#             print("Invalid month input, please try again")
-#             continue
-#         else:
-#             if int(date[5:7])<0 or int(date[5:7])>12:
-#                 print("Invalid month input, please try again")
-#                 continue
-        
-#         # checks if valid day
-#         try:
-#             int(date[8:10])
-#         except ValueError:
-#             print("Invalid day input, please try again")
-#             continue
-#         else:
-#             # if Feb
-#             if int(date[5:7]) == 2:
-#                 # if leap year:
-#                 if int(date[:4])% 4==0 and (int(date[:4])%100!=0 or int(date[:4])%400==0):
-#                     if int(date[8:10])<0 or int(date[8:10])>29:
-#                         print("Invalid day input, please try again")
-#                         continue
-#                 # if not leap year
-#                 else:
-#                     if int(date[8:10])<0 or int(date[8:10])>28:
-#                         print("Invalid day input, please try again")
-#                         continue
-
-#             # if Apr, Jun, Sep, Nov
-#             elif int(date[5:7]) == 4 or int(date[5:7]) == 6 or int(date[5:7]) == 9 or int(date[5:7]) == 11:
-#                 if int(date[8:10])<0 or int(date[8:10])>30:
-#                     print("Invalid day input, please try again")
-#                     continue
-
-#             # if Jan, Mar, May, Jul, Aug, Oct, Dec
-#             else:
-#                 if int(date[8:10])<0 or int(date[8:10])>31:
-#                     print("Invalid day input, please try again")
-#                     continue
-
-#         valid_date=True
-
-#     start_of_date = date + "T00:00:00Z"
-#     end_of_date = date + "T23:59:59Z"
-#     events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
-#                                   timeMax=end_of_date, singleEvents=True,
-#                                   orderBy='startTime').execute()
-#     return events_result.get('items', [])
-
 def get_events_with_input(api):
     """
     Gets all events from date specified
@@ -296,7 +215,49 @@ def get_events_with_input(api):
     events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
                                   timeMax=end_of_date, singleEvents=True,
                                   orderBy='startTime').execute()
-    return events_result.get('items', [])
+
+    events = events_result.get('items', [])
+    list_of_events = []
+    index=0
+
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
+        list_of_events.append(one_event)
+        print(one_event)
+        index+=1
+
+    validIndex = False
+    while not validIndex:
+        print("Please input an index to see more details of an event, else input !q to leave")
+        index_input = input()
+        if index_input == "!q":
+            return None
+        try:
+            int(index_input)
+        except ValueError:
+            print("Invalid index")
+        else:
+            for t_event in list_of_events:
+                if int(index_input) == t_event[0]:
+                    event = events[int(index_input)]
+                    start = event['start'].get('dateTime', event['start'].get('date'))
+                    print(start, event['summary'], event['reminders'])
+                    validIndex = True
+
+    return None
+
+# def testReminders(api, current_time):
+#     str_of_current_date = current_time[:10] # takes just YYYY-MM-DD
+#     future_year = str(int(current_time[:4]) + 2) # takes the current year and +2
+#     future_date = future_year + current_time[4:]
+#     past_year = str(int(current_time[:4]) - 5) # takes the current year and -5
+#     past_date = past_year + current_time[4:]
+#     events_result = api.CalendarList().list(calendarId='primary', timeMin=past_date,
+#                                   timeMax=future_date, singleEvents=True,
+#                                   orderBy='startTime').execute()
+#     return events_result.get('items', [])
 
 def main():
     api = get_calendar_api()
@@ -304,13 +265,18 @@ def main():
 
     # events = get_upcoming_events(api, time_now, 10)
     # events = get_all_events(api, time_now)
-    events = get_events_with_input(api)
+    # events = get_events_with_input(api)
+    get_events_with_input(api)
+    # calendar = api.calendars().get(calendarId='primary').execute()
+    # print(calendar.events['summary'])
 
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
+    # testReminders(api, time_now)
+
+    # if not events:
+    #     print('No upcoming events found.')
+    # for event in events:
+    #     start = event['start'].get('dateTime', event['start'].get('date'))
+    #     print(start, event['summary'])
 
 
 if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
