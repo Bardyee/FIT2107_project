@@ -88,82 +88,211 @@ def get_all_events(api, current_time):
     # convert str to date
     # x = datetime.date.fromisoformat(str_of_current_date) where str_of_current_date in YYYY-MM-DD
 
+# def get_events_with_input(api):
+#     """
+#     Gets all events from date specified
+#     """
+#     date = ""
+#     valid_date=False
+
+#     while not valid_date:
+#         date = input("Input date in YYYY-MM-DD format: ")
+
+#         # checks if format is XXXX-XX-XX
+#         if len(date)!=10 or date[4]!="-" or date[7]!="-":
+#             print("Invalid date, please try again")
+#             print(len(date))
+#             print(date[5])
+#             print(date[8])
+#             continue
+        
+#         # checks if valid year
+#         try:
+#             int(date[:4])
+#         except ValueError:
+#             print("Invalid year input, please try again")
+#             continue
+#         else:
+#             if int(date[:4])<0 or int(date[:4])>9999:
+#                 print("Invalid year input, please try again")
+#                 continue
+        
+#         # checks if valid month
+#         try:
+#             int(date[5:7])
+#         except ValueError:
+#             print("Invalid month input, please try again")
+#             continue
+#         else:
+#             if int(date[5:7])<0 or int(date[5:7])>12:
+#                 print("Invalid month input, please try again")
+#                 continue
+        
+#         # checks if valid day
+#         try:
+#             int(date[8:10])
+#         except ValueError:
+#             print("Invalid day input, please try again")
+#             continue
+#         else:
+#             # if Feb
+#             if int(date[5:7]) == 2:
+#                 # if leap year:
+#                 if int(date[:4])% 4==0 and (int(date[:4])%100!=0 or int(date[:4])%400==0):
+#                     if int(date[8:10])<0 or int(date[8:10])>29:
+#                         print("Invalid day input, please try again")
+#                         continue
+#                 # if not leap year
+#                 else:
+#                     if int(date[8:10])<0 or int(date[8:10])>28:
+#                         print("Invalid day input, please try again")
+#                         continue
+
+#             # if Apr, Jun, Sep, Nov
+#             elif int(date[5:7]) == 4 or int(date[5:7]) == 6 or int(date[5:7]) == 9 or int(date[5:7]) == 11:
+#                 if int(date[8:10])<0 or int(date[8:10])>30:
+#                     print("Invalid day input, please try again")
+#                     continue
+
+#             # if Jan, Mar, May, Jul, Aug, Oct, Dec
+#             else:
+#                 if int(date[8:10])<0 or int(date[8:10])>31:
+#                     print("Invalid day input, please try again")
+#                     continue
+
+#         valid_date=True
+
+#     start_of_date = date + "T00:00:00Z"
+#     end_of_date = date + "T23:59:59Z"
+#     events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
+#                                   timeMax=end_of_date, singleEvents=True,
+#                                   orderBy='startTime').execute()
+#     return events_result.get('items', [])
+
 def get_events_with_input(api):
     """
     Gets all events from date specified
     """
-    date = ""
-    valid_date=False
+    validYear = False
+    validMonth = False
+    validDay = False
+    year=""
+    month=""
+    day=""
+    print("Leave empty if filter not needed")
 
-    while not valid_date:
-        date = input("Input date in YYYY-MM-DD format: ")
-
-        # checks if format is XXXX-XX-XX
-        if len(date)!=10 or date[4]!="-" or date[7]!="-":
-            print("Invalid date, please try again")
-            print(len(date))
-            print(date[5])
-            print(date[8])
+    while not validYear:
+        print("Input year in YYYY format")
+        year = input("Filter year: ")
+        if year=="":
+            validYear=True
             continue
-        
-        # checks if valid year
         try:
-            int(date[:4])
+            int(year)
         except ValueError:
             print("Invalid year input, please try again")
             continue
         else:
-            if int(date[:4])<0 or int(date[:4])>9999:
+            if int(year)<0 or int(year)>9999:
                 print("Invalid year input, please try again")
                 continue
-        
-        # checks if valid month
+            else:
+                validYear=True
+
+    while not validMonth:
+        if year=="":
+            break
+        print("Input year in MM format")
+        month = input("Filter month: ")
+        if month=="":
+            validMonth=True
+            continue
         try:
-            int(date[5:7])
+            int(month)
         except ValueError:
             print("Invalid month input, please try again")
             continue
         else:
-            if int(date[5:7])<0 or int(date[5:7])>12:
+            if int(month)<0 or int(month)>12:
                 print("Invalid month input, please try again")
                 continue
-        
-        # checks if valid day
+            else:
+                validMonth=True
+
+    while not validDay:
+        if month=="":
+            break
+        print("Input year in DD format")
+        day = input("Filter day: ")
+        if day=="":
+            validDay=True
+            continue
         try:
-            int(date[8:10])
+            int(day)
         except ValueError:
             print("Invalid day input, please try again")
             continue
         else:
             # if Feb
-            if int(date[5:7]) == 2:
+            if int(month) == 2:
                 # if leap year:
-                if int(date[:4])% 4==0 and (int(date[:4])%100!=0 or int(date[:4])%400==0):
-                    if int(date[8:10])<0 or int(date[8:10])>29:
+                if int(year)% 4==0 and (int(year)%100!=0 or int(year)%400==0):
+                    if int(day)<0 or int(day)>29:
                         print("Invalid day input, please try again")
                         continue
                 # if not leap year
                 else:
-                    if int(date[8:10])<0 or int(date[8:10])>28:
+                    if int(day)<0 or int(day)>28:
                         print("Invalid day input, please try again")
                         continue
 
             # if Apr, Jun, Sep, Nov
-            elif int(date[5:7]) == 4 or int(date[5:7]) == 6 or int(date[5:7]) == 9 or int(date[5:7]) == 11:
-                if int(date[8:10])<0 or int(date[8:10])>30:
+            elif int(month) == 4 or int(month) == 6 or int(month) == 9 or int(month) == 11:
+                if int(day)<0 or int(day)>30:
                     print("Invalid day input, please try again")
                     continue
 
             # if Jan, Mar, May, Jul, Aug, Oct, Dec
             else:
-                if int(date[8:10])<0 or int(date[8:10])>31:
+                if int(day)<0 or int(day)>31:
                     print("Invalid day input, please try again")
                     continue
+            
+            validDay=True
+    
+    if year=="":
+        return None
 
-        valid_date=True
+    elif month=="":
+        start_date = year + "-01-01"
+        end_date = year + "-12-31"
 
-    start_of_date = date + "T00:00:00Z"
-    end_of_date = date + "T23:59:59Z"
+    elif day=="":
+        start_date = year + "-" + month + "-01"
+
+        # if Feb
+        if int(month) == 2:
+            # if leap year:
+            if int(year)% 4==0 and (int(year)%100!=0 or int(year)%400==0):
+                end_date = year + "-" + month + "-29"
+            # if not leap year
+            else:
+                end_date = year + "-" + month + "-28"
+
+        # if Apr, Jun, Sep, Nov
+        elif int(month) == 4 or int(month) == 6 or int(month) == 9 or int(month) == 11:
+            end_date = year + "-" + month + "-30"
+
+        # if Jan, Mar, May, Jul, Aug, Oct, Dec
+        else:
+            end_date = year + "-" + month + "-31"
+
+    else:
+        start_date = year + "-" + month + "-" + day
+        end_date = year + "-" + month + "-" + day
+
+    start_of_date = start_date + "T00:00:00Z"
+    end_of_date = end_date + "T23:59:59Z"
     events_result = api.events().list(calendarId='primary', timeMin=start_of_date,
                                   timeMax=end_of_date, singleEvents=True,
                                   orderBy='startTime').execute()
