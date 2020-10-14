@@ -217,22 +217,21 @@ def get_events_with_input(api):
                                   orderBy='startTime').execute()
 
     events = events_result.get('items', [])
-    list_of_events = []
-    index=0
 
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
-        list_of_events.append(one_event)
-        print(one_event)
-        index+=1
+    while True:
+        list_of_events = []
+        index=0
+        if not events:
+            print('No upcoming events found.')
+        for event in events:
+            one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
+            list_of_events.append(one_event)
+            print(one_event)
+            index+=1
 
-    validIndex = False
-    while not validIndex:
-        print("Please input an index to see more details of an event, else input !q to leave")
+        print("Please input an index to see more details of an event, else input q to leave this page")
         index_input = input()
-        if index_input == "!q":
+        if index_input == "q":
             return None
         try:
             int(index_input)
@@ -243,40 +242,58 @@ def get_events_with_input(api):
                 if int(index_input) == t_event[0]:
                     event = events[int(index_input)]
                     start = event['start'].get('dateTime', event['start'].get('date'))
-                    print(start, event['summary'], event['reminders'])
-                    validIndex = True
+                    print("\n")
+                    print("event name: " + event['summary'])
+                    print("created: " + event['created'])
+                    print("creator: " + event['creator']['email'])
+                    print("organizer: " + event['organizer']['email'])
+                    print("start time: " + str(event['start']['dateTime']))
+                    print("end time: " + str(event['end']['dateTime']))
+                    print("reminders: " + str(event['reminders']))
+                    print("\n")
 
     return None
-
-# def testReminders(api, current_time):
-#     str_of_current_date = current_time[:10] # takes just YYYY-MM-DD
-#     future_year = str(int(current_time[:4]) + 2) # takes the current year and +2
-#     future_date = future_year + current_time[4:]
-#     past_year = str(int(current_time[:4]) - 5) # takes the current year and -5
-#     past_date = past_year + current_time[4:]
-#     events_result = api.CalendarList().list(calendarId='primary', timeMin=past_date,
-#                                   timeMax=future_date, singleEvents=True,
-#                                   orderBy='startTime').execute()
-#     return events_result.get('items', [])
 
 def main():
     api = get_calendar_api()
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 
-    # events = get_upcoming_events(api, time_now, 10)
-    # events = get_all_events(api, time_now)
-    # events = get_events_with_input(api)
-    get_events_with_input(api)
-    # calendar = api.calendars().get(calendarId='primary').execute()
-    # print(calendar.events['summary'])
+    running = True
 
-    # testReminders(api, time_now)
+    def printing_events(events):
+        if not events:
+            print('No upcoming events found.')
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start, event['summary'])
 
-    # if not events:
-    #     print('No upcoming events found.')
-    # for event in events:
-    #     start = event['start'].get('dateTime', event['start'].get('date'))
-    #     print(start, event['summary'])
+    while running:
+        print("Menu:")
+        print("Select option by inputting the number assosiated with command")
+        print("1: get upcoming events")
+        print("2: get all events")
+        print("3: get events with user input")
+        print("q: quit the program")
+        u_input = input("Input here: ")
+
+        if u_input == "1":
+            u_input_2 = input("How many events ahead do you want to see? ")
+            events = get_upcoming_events(api, time_now, int(u_input_2))
+            printing_events(events)
+
+        elif u_input == "2":
+            events = get_all_events(api, time_now)
+            printing_events(events)
+
+        elif u_input == "3":
+            get_events_with_input(api)
+
+        elif u_input == "q":
+            print("shutting down program...")
+            running=False
+
+        else:
+            print("invalid command")
 
 
 if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
