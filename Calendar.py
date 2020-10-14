@@ -54,7 +54,6 @@ def get_calendar_api():
 
     return build('calendar', 'v3', credentials=creds)
 
-
 def get_upcoming_events(api, starting_time, number_of_events):
     """
     Shows basic usage of the Google Calendar API.
@@ -69,6 +68,7 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
     
     # Add your methods here.
+
 def get_all_events(api, current_time):
     # line coverage
     """
@@ -254,6 +254,26 @@ def get_events_with_input(api):
         print('No upcoming events found.')
     return None
 
+def get_events_with_keyword(api, keyword): 
+    """
+    Prints the start and details of a given event on the user's calendar.
+    """
+    print("\n")
+    if(keyword == ""):
+        raise KeyError("Keyword must contain 1 or more characters")
+
+    events_results = api.events().list(calendarId='primary', singleEvents=True,
+                                        orderBy='startTime').execute()
+    
+    event_list = events_results.get('items', [])
+    index = 0
+    for event in event_list:
+        title = event['summary']
+        if (keyword.lower() in title.lower()):
+            index += 1
+            print(title)
+    return None
+
 def main():
     api = get_calendar_api()
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
@@ -261,9 +281,19 @@ def main():
     running = True
 
     def printing_events(events):
+        print("\nEvents:")
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
+        print("\n")
+        # print("Reminders")
+        # for event in events:
+        #     print(event['reminders'])
+
+    # def printing_reminders(reminders):
+    #     print("\nReminders:")
+    #     for reminder in reminders:
+    #         print(reminder['reminder'])
 
     while running:
         print("Menu:")
@@ -271,6 +301,7 @@ def main():
         print("1: get upcoming events")
         print("2: get all events")
         print("3: get events with user input")
+        print("4: get events with keyword")
         print("q: quit the program")
         u_input = input("Input here: ")
 
@@ -279,7 +310,7 @@ def main():
             try:
                 events = get_upcoming_events(api, time_now, int(u_input_2))
             except ValueError:
-                print('Invalid input')
+                print('\nInvalid input\n')
             else:
                 printing_events(events)
 
@@ -289,6 +320,13 @@ def main():
 
         elif u_input == "3":
             get_events_with_input(api)
+
+        elif u_input == "4":
+            key = input("Search for...")
+            if not key:
+                print('\nInvalid input\n')
+            else:
+                get_events_with_keyword(api, key)
 
         elif u_input == "q":
             print("shutting down program...")
