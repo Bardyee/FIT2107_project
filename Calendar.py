@@ -112,7 +112,7 @@ def get_events_with_input(api):
             print("Invalid year input, please try again")
             continue
         else:
-            if int(year)<0 or int(year)>9999:
+            if int(year)<1 or int(year)>9999:
                 print("Invalid year input, please try again")
                 continue
             else:
@@ -132,7 +132,7 @@ def get_events_with_input(api):
             print("Invalid month input, please try again")
             continue
         else:
-            if int(month)<0 or int(month)>12:
+            if int(month)<1 or int(month)>12:
                 print("Invalid month input, please try again")
                 continue
             else:
@@ -156,30 +156,31 @@ def get_events_with_input(api):
             if int(month) == 2:
                 # if leap year:
                 if int(year)% 4==0 and (int(year)%100!=0 or int(year)%400==0):
-                    if int(day)<0 or int(day)>29:
+                    if int(day)<1 or int(day)>29:
                         print("Invalid day input, please try again")
                         continue
                 # if not leap year
                 else:
-                    if int(day)<0 or int(day)>28:
+                    if int(day)<1 or int(day)>28:
                         print("Invalid day input, please try again")
                         continue
 
             # if Apr, Jun, Sep, Nov
             elif int(month) == 4 or int(month) == 6 or int(month) == 9 or int(month) == 11:
-                if int(day)<0 or int(day)>30:
+                if int(day)<1 or int(day)>30:
                     print("Invalid day input, please try again")
                     continue
 
             # if Jan, Mar, May, Jul, Aug, Oct, Dec
             else:
-                if int(day)<0 or int(day)>31:
+                if int(day)<1 or int(day)>31:
                     print("Invalid day input, please try again")
                     continue
             
             validDay=True
     
     if year=="":
+        print("No filters were used, returning to menu...\n")
         return None
 
     elif month=="":
@@ -218,11 +219,9 @@ def get_events_with_input(api):
 
     events = events_result.get('items', [])
 
-    while True:
+    while events:
         list_of_events = []
         index=0
-        if not events:
-            print('No upcoming events found.')
         for event in events:
             one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
             list_of_events.append(one_event)
@@ -251,7 +250,8 @@ def get_events_with_input(api):
                     print("end time: " + str(event['end']['dateTime']))
                     print("reminders: " + str(event['reminders']))
                     print("\n")
-
+    if not events:
+        print('No upcoming events found.')
     return None
 
 def main():
@@ -261,8 +261,6 @@ def main():
     running = True
 
     def printing_events(events):
-        if not events:
-            print('No upcoming events found.')
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
@@ -278,8 +276,12 @@ def main():
 
         if u_input == "1":
             u_input_2 = input("How many events ahead do you want to see? ")
-            events = get_upcoming_events(api, time_now, int(u_input_2))
-            printing_events(events)
+            try:
+                events = get_upcoming_events(api, time_now, int(u_input_2))
+            except ValueError:
+                print('Invalid input')
+            else:
+                printing_events(events)
 
         elif u_input == "2":
             events = get_all_events(api, time_now)
