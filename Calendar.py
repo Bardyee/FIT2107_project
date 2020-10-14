@@ -272,6 +272,9 @@ def get_events_with_keyword(api, keyword):
         if (keyword.lower() in title.lower()):
             index += 1
             print(title)
+    if (index == 0):
+        print("No events with the given keyword were found.")
+    print("\n")
     return None
 
 def main():
