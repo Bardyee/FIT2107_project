@@ -24,7 +24,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
 
 def get_calendar_api():
@@ -269,9 +269,32 @@ def get_events_with_keyword(api, keyword):
     index = 0
     for event in event_list:
         title = event['summary']
+        eventID = event['id']
         if (keyword.lower() in title.lower()):
             index += 1
             print(title)
+            print(eventID)
+    if (index == 0):
+        print("No events with the given keyword were found.")
+    print("\n")
+    return None
+
+def delete_event(api, name):
+
+    events_results = api.events().list(calendarId='primary', singleEvents=True,
+                                        orderBy='startTime').execute()
+    
+    event_list = events_results.get('items', [])
+    index = 0
+    eventNumber = ""
+    for event in event_list:
+        title = event['summary']
+        eventID = event['id']
+        if (name.lower() in title.lower()):
+            index +=1
+            eventNumber = eventID
+            break
+    api.events().delete(calendarId='primary', eventId=eventNumber).execute()
     if (index == 0):
         print("No events with the given keyword were found.")
     print("\n")
@@ -305,6 +328,7 @@ def main():
         print("2: get all events")
         print("3: get events with user input")
         print("4: get events with keyword")
+        print("5: delete the first event with the given keyword")
         print("q: quit the program")
         u_input = input("Input here: ")
 
@@ -325,11 +349,19 @@ def main():
             get_events_with_input(api)
 
         elif u_input == "4":
-            key = input("Search for...")
+            key = input("Search for... ")
             if not key:
                 print('\nInvalid input\n')
             else:
                 get_events_with_keyword(api, key)
+
+        elif u_input == "5":
+            key = input("Delete event titled... ")
+            if not key:
+                print('\nInvalid input\n')
+            else:
+                delete_event(api, key)
+
 
         elif u_input == "q":
             print("shutting down program...")
