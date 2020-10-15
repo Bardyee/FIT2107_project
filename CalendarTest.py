@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+from unittest.mock import MagicMock
 import Calendar
 # Add other imports here if needed
 
@@ -149,6 +150,17 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2021-04-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2021-04-01T23:59:59Z")
 
+class GetDetailsOfEventTest(unittest.TestCase):
+    def test_get_details_of_event(self):
+        mock_event = MagicMock()
+
+        events = Calendar.get_details_of_event(mock_event)
+
+        self.assertEqual(
+            mock_event.events.return_value.list.return_value.execute.return_value.get.call_count, 0)
+
+
+
 
 def main():
     # Create the test suite from the cases above.
@@ -161,6 +173,10 @@ def main():
 
     suite = unittest.TestLoader().loadTestsFromTestCase(GetEventsWithInputTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
+
+    suite = unittest.TestLoader().loadTestsFromTestCase(GetDetailsOfEventTest)
+    unittest.TextTestRunner(verbosity=2).run(suite)
+
 
 
 
