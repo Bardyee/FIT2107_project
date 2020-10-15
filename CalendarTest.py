@@ -19,6 +19,15 @@ class CalendarTest(unittest.TestCase):
         args, kwargs = mock_api.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs['maxResults'], num_events)
 
+    def test_get_upcoming_events_number_error(self):
+        num_events = 0
+        time = "2020-08-03T00:00:00.000000Z"
+
+        mock_api = Mock()
+
+        with self.assertRaises(ValueError):
+            events = Calendar.get_upcoming_events(mock_api, time, num_events)
+
     # Add more test cases here
 
 
