@@ -282,8 +282,8 @@ def delete_event(api, name):
     """
     Deletes the first event found with the given keyword.
     """
-    # if not name:
-    #     raise KeyError("Name must not be empty.")
+    if not name:
+        raise KeyError("Name must not be empty.")
 
     events_results = api.events().list(calendarId='primary', singleEvents=True,
                                         orderBy='startTime').execute()
@@ -366,17 +366,17 @@ def main():
 
         elif u_input == "4":
             key = input("Search for... ")
-            if not key:
-                print('\nInvalid input\n')
-            else:
+            try:
                 get_events_with_keyword(api, key)
+            except KeyError:
+                print('\nInvalid input\n')
 
         elif u_input == "5":
             key = input("Delete event titled... ")
-            if not key:
-                print('\nInvalid input\n')
-            else:
+            try:
                 delete_event(api, key)
+            except KeyError:
+                print('\nInvalid input\n')
 
 
         elif u_input == "q":
