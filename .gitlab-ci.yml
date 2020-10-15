@@ -4,5 +4,7 @@ test:
   - pip install --upgrade pip
   - pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
   - pip install coverage
-  - python CalendarTest.py
-  - python GetAllEventsTest.py
+  - coverage run --branch CalendarTest.py
+  - coverage run --branch GetAllEventsTest.py
+  - coverage run --branch GetEventsWithInputTest.py
+  - coverage report -m
