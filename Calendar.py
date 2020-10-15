@@ -84,10 +84,6 @@ def get_all_events(api, current_time):
                                   orderBy='startTime').execute()
     return events_result.get('items', [])
 
-    # self recording some methods
-    # convert str to date
-    # x = datetime.date.fromisoformat(str_of_current_date) where str_of_current_date in YYYY-MM-DD
-
 def get_events_with_input(api):
     """
     Gets all events from date specified
@@ -181,7 +177,7 @@ def get_events_with_input(api):
     
     if year=="":
         print("No filters were used, returning to menu...\n")
-        return None
+        return 0
 
     elif month=="":
         start_date = year + "-01-01"
@@ -232,7 +228,7 @@ def get_events_with_input(api):
         print("Please input an index to see more details of an event, else input q to leave this page")
         index_input = input()
         if index_input == "q":
-            return None
+            return index+1
         try:
             int(index_input)
         except ValueError:
@@ -253,7 +249,7 @@ def get_events_with_input(api):
                     print("\n")
     if not events:
         print('No upcoming events found.')
-    return None
+    return 0
 
 def get_events_with_keyword(api, keyword): 
     """
@@ -270,57 +266,60 @@ def get_events_with_keyword(api, keyword):
     index = 0
     for event in event_list:
         title = event['summary']
-        eventID = event['id']
         if (keyword.lower() in title.lower()):
             index += 1
-            print(title)
-            print(eventID)
+            print(index,title)
+            # print(title)
     if (index == 0):
         print("No events with the given keyword were found.")
     print("\n")
-    return None
+    return (index)
 
 def delete_event(api, name):
     """
     Deletes the first event found with the given keyword.
     """
-    if not name:
-        raise KeyError("Name must not be empty.")
+    # if not name:
+    #     raise KeyError("Name must not be empty.")
 
     events_results = api.events().list(calendarId='primary', singleEvents=True,
                                         orderBy='startTime').execute()
     
     event_list = events_results.get('items', [])
 
-    while True:
-        print("\n")
-        index = 0
-        event_array = []
-        for event in event_list:
-            title = event['summary']
-            eventID = event['id']
-            if (name.lower() in title.lower()):
-                event_array.append([index, title, eventID])
-                index +=1
-                
-        if (index == 0):
-            print("No events with the given keyword were found.")
-            break
-        for i in event_array:
-            print(i[0], i[1]) # Display the index and title of the event
-        delete_inp = input('Please select an index to be deleted, or enter "q" to quit: ')
-        if (delete_inp == "q"):
-            break
-        if (int(delete_inp) >= len(event_array)):
-            print("Invalid index!")
-            break
-        else:
-            api.events().delete(calendarId='primary', eventId=event_array[int(delete_inp)][2]).execute()
-            print("Event titled: "+event_array[int(delete_inp)][1]+" successfully deleted.")
-            break
     
     print("\n")
-    return None
+    index = 0
+    event_array = []
+    for event in event_list:
+        title = event['summary']
+        eventID = event['id']
+        if (name.lower() in title.lower()):
+            event_array.append([index, title, eventID])
+            index +=1
+    
+    numOfKeyEvents = len(event_array)
+            
+    if (index == 0):
+        print("No events with the given keyword were found.\n")
+        return numOfKeyEvents
+    else:
+        for i in event_array:
+            print(i[0], i[1]) # Display the index and title of the event
+    
+    delete_inp = input('Please select an index to be deleted, or enter "q" to quit: ')
+    if (delete_inp == "q"):
+        return numOfKeyEvents
+    elif (int(delete_inp) >= len(event_array)):
+        print("Invalid index!")
+    else:
+        api.events().delete(calendarId='primary', eventId=event_array[int(delete_inp)][2]).execute()
+        print("Event titled: "+event_array[int(delete_inp)][1]+" successfully deleted.")
+        event_array.pop(int(delete_inp))
+        numOfKeyEvents = len(event_array)
+    
+    print("\n")
+    return numOfKeyEvents
 
 def main():
     api = get_calendar_api()
@@ -334,14 +333,6 @@ def main():
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
         print("\n")
-        # print("Reminders")
-        # for event in events:
-        #     print(event['reminders'])
-
-    # def printing_reminders(reminders):
-    #     print("\nReminders:")
-    #     for reminder in reminders:
-    #         print(reminder['reminder'])
 
     while running:
         print("Menu:")
@@ -391,7 +382,6 @@ def main():
 
         else:
             print("invalid command")
-
 
 if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
     main()
