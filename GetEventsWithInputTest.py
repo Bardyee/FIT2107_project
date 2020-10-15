@@ -10,6 +10,7 @@ class CalendarTest(unittest.TestCase):
     def test_get_events_with_input(self):
         time = "2020-08-03T00:00:00.000000Z"
 
+        
         mock_api = Mock()
         num_events = Calendar.get_events_with_input(mock_api)
 
