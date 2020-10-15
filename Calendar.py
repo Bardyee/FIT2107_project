@@ -156,62 +156,39 @@ def get_events_with_keyword(api, keyword):
     
     event_list = events_results.get('items', [])
     index = 0
-    for event in event_list:
-        title = event['summary']
-        if (keyword.lower() in title.lower()):
-            index += 1
-            print(index,title)
-            # print(title)
-    if (index == 0):
-        print("No events with the given keyword were found.")
-    print("\n")
-    return (index)
-
-def delete_event(api, name):
-    """
-    Deletes event found with the given keyword.
-    """
-    if not name:
-        raise KeyError("Name must not be empty.")
-
-    events_results = api.events().list(calendarId='primary', singleEvents=True,
-                                        orderBy='startTime').execute()
-    
-    event_list = events_results.get('items', [])
-
-    
-    print("\n")
-    index = 0
     event_array = []
     for event in event_list:
         title = event['summary']
         eventID = event['id']
-        if (name.lower() in title.lower()):
-            event_array.append([index, title, eventID])
+        if (keyword.lower() in title.lower()):
+            event_array.append(event)
             index +=1
-    
-    numOfKeyEvents = len(event_array)
-            
     if (index == 0):
         print("No events with the given keyword were found.\n")
-        return numOfKeyEvents
+        return None
     else:
-        for i in event_array:
-            print(i[0], i[1]) # Display the index and title of the event
-    
-    delete_inp = input('Please select an index to be deleted, or enter "q" to quit: ')
-    if (delete_inp == "q"):
-        return numOfKeyEvents
-    elif (int(delete_inp) >= len(event_array)):
+        for x in range(len(event_array)):
+            print(x, event_array[x]['summary'])
+        print("\n")
+        return (event_array)
+
+def delete_event(api, index, event_array):
+    """
+    Deletes event found with the given keyword.
+    """
+    if((index == "") or (int(index) >= len(event_array))):
+        raise IndexError("Invalid index")
+    if (index == "q"):
+        return []
+    elif (int(index) >= len(event_array)):
         print("Invalid index!")
+        return []
     else:
-        api.events().delete(calendarId='primary', eventId=event_array[int(delete_inp)][2]).execute()
-        print("Event titled: "+event_array[int(delete_inp)][1]+" successfully deleted.")
-        event_array.pop(int(delete_inp))
-        numOfKeyEvents = len(event_array)
-    
-    print("\n")
-    return numOfKeyEvents
+        api.events().delete(calendarId='primary', eventId=event_array[int(index)]['id']).execute()
+        print("Event titled: "+event_array[int(index)]['summary']+" successfully deleted.")
+        retVal = event_array.pop(int(index))
+        print("\n")
+        return retVal
 
 def main():
     api = get_calendar_api()
@@ -292,9 +269,20 @@ def main():
         elif u_input == "5":
             key = input("Delete event titled... ")
             try:
-                delete_event(api, key)
+                eventNum = get_events_with_keyword(api, key)
             except KeyError:
                 print('\nInvalid input\n')
+
+            if (eventNum is not None):
+                index = input("Select an index to delete: ")
+                try:
+                    int(index)
+                except ValueError:
+                    print('\nInvalid index\n')
+                try:
+                    delete_event(api, index, eventNum)
+                except IndexError:
+                    print('\nInvalid index\n')
 
 
         elif u_input == "q":
