@@ -6,4 +6,3 @@ test:
   - pip install coverage
   - python CalendarTest.py
   - python GetAllEventsTest.py
-  - coverage report

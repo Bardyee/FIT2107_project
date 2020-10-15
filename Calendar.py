@@ -83,102 +83,12 @@ def get_all_events(api, current_time):
                                   orderBy='startTime').execute()
     return events_result.get('items', [])
 
-def get_events_with_input(api):
+def get_events_with_input(api, year, month="", day=""):
     """
     Gets all events from date specified
     """
-    validYear = False
-    validMonth = False
-    validDay = False
-    year=""
-    month=""
-    day=""
-    print("\nLeave empty if filter not needed")
 
-    while not validYear:
-        print("Input year in YYYY format")
-        year = input("Filter year: ")
-        if year=="":
-            validYear=True
-            continue
-        try:
-            int(year)
-        except ValueError:
-            print("Invalid year input, please try again")
-            continue
-        else:
-            if int(year)<1 or int(year)>9999:
-                print("Invalid year input, please try again")
-                continue
-            else:
-                validYear=True
-
-    while not validMonth:
-        if year=="":
-            break
-        print("\nInput year in MM format")
-        month = input("Filter month: ")
-        if month=="":
-            validMonth=True
-            continue
-        try:
-            int(month)
-        except ValueError:
-            print("Invalid month input, please try again")
-            continue
-        else:
-            if int(month)<1 or int(month)>12:
-                print("Invalid month input, please try again")
-                continue
-            else:
-                validMonth=True
-
-    while not validDay:
-        if month=="":
-            break
-        print("\nInput year in DD format")
-        day = input("Filter day: ")
-        if day=="":
-            validDay=True
-            continue
-        try:
-            int(day)
-        except ValueError:
-            print("Invalid day input, please try again")
-            continue
-        else:
-            # if Feb
-            if int(month) == 2:
-                # if leap year:
-                if int(year)% 4==0 and (int(year)%100!=0 or int(year)%400==0):
-                    if int(day)<1 or int(day)>29:
-                        print("Invalid day input, please try again")
-                        continue
-                # if not leap year
-                else:
-                    if int(day)<1 or int(day)>28:
-                        print("Invalid day input, please try again")
-                        continue
-
-            # if Apr, Jun, Sep, Nov
-            elif int(month) == 4 or int(month) == 6 or int(month) == 9 or int(month) == 11:
-                if int(day)<1 or int(day)>30:
-                    print("Invalid day input, please try again")
-                    continue
-
-            # if Jan, Mar, May, Jul, Aug, Oct, Dec
-            else:
-                if int(day)<1 or int(day)>31:
-                    print("Invalid day input, please try again")
-                    continue
-            
-            validDay=True
-    
-    if year=="":
-        print("No filters were used, returning to menu...\n")
-        return 0
-
-    elif month=="":
+    if month=="":
         start_date = year + "-01-01"
         end_date = year + "-12-31"
 
@@ -214,45 +124,18 @@ def get_events_with_input(api):
 
     events = events_result.get('items', [])
 
-    while events:
-        list_of_events = []
-        index=0
-        print("\n")
-        for event in events:
-            one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
-            list_of_events.append(one_event)
-            print(one_event)
-            index+=1
+    return events
 
-        print("Please input an index to see more details of an event, else input q to leave this page")
-        index_input = input()
-        if index_input == "q":
-            return index+1
-        try:
-            int(index_input)
-        except ValueError:
-            print("Invalid index\n")
-            break
-        else:
-            if int(index_input)>=len(list_of_events):
-                print("Invalid index\n")
-                break
-            for t_event in list_of_events:
-                if int(index_input) == t_event[0]:
-                    event = events[int(index_input)]
-                    start = event['start'].get('dateTime', event['start'].get('date'))
-                    print("\n")
-                    print("event name: " + event['summary'])
-                    print("created: " + event['created'])
-                    print("creator: " + event['creator']['email'])
-                    print("organizer: " + event['organizer']['email'])
-                    print("start time: " + str(event['start']['dateTime']))
-                    print("end time: " + str(event['end']['dateTime']))
-                    print("reminders: " + str(event['reminders']))
-                    print("\n")
-    if not events:
-        print('No upcoming events found.')
-    return 0
+def get_details_of_event(event):
+    print("\n")
+    print("event name: " + event['summary'])
+    print("created: " + event['created'])
+    print("creator: " + event['creator']['email'])
+    print("organizer: " + event['organizer']['email'])
+    print("start time: " + str(event['start']['dateTime']))
+    print("end time: " + str(event['end']['dateTime']))
+    print("reminders: " + str(event['reminders']))
+    print("\n")
 
 def get_events_with_keyword(api, keyword): 
     """
@@ -340,7 +223,36 @@ def main():
             printing_events(events)
 
         elif u_input == "3":
-            get_events_with_input(api)
+            u_year = input("Input year in YYYY format: ")
+            u_month = input("Input month in MM format: ")
+            u_day = input("Input day in DD format: ")
+            try:
+                events = get_events_with_input(api, u_year, u_month, u_day)
+            except:
+                print("Invalid input")
+            else:
+                while events:
+                    list_of_events = []
+                    index=0
+                    print("\n")
+                    for event in events:
+                        one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
+                        list_of_events.append(one_event)
+                        print(one_event)
+                        index+=1
+
+                    print("Please input an index to see more details of an event, else input q to leave this page")
+                    index_input = input()
+                    if index_input == "q":
+                        break
+                    try:
+                        int(index_input)
+                    except ValueError:
+                        print("invalid index")
+                    else:
+                        if int(index_input) < len(list_of_events):
+                            get_details_of_event(events[int(index_input)])
+                            break
 
         elif u_input == "4":
             key = input("Search for... ")
