@@ -139,7 +139,7 @@ def get_details_of_event(event):
 
 def get_events_with_keyword(api, keyword): 
     """
-    Prints the start and details of a given event on the user's calendar.
+    Prints the index and name of a given event from the user's calendar.
     """
     print("\n")
     if(keyword == ""):
@@ -166,23 +166,14 @@ def get_events_with_keyword(api, keyword):
         print("\n")
         return (event_array)
 
-def delete_event(api, index, event_array):
+def delete_event(api, event):
     """
-    Deletes event found with the given keyword.
+    Deletes a given event.
     """
-    if((index == "") or (int(index) >= len(event_array))):
-        raise IndexError("Invalid index")
-    if (index == "q"):
-        return []
-    elif (int(index) >= len(event_array)):
-        print("Invalid index!")
-        return []
-    else:
-        api.events().delete(calendarId='primary', eventId=event_array[int(index)]['id']).execute()
-        print("Event titled: "+event_array[int(index)]['summary']+" successfully deleted.")
-        retVal = event_array.pop(int(index))
-        print("\n")
-        return retVal
+    api.events().delete(calendarId='primary', eventId=event['id']).execute()
+    print("Event titled: "+event['summary']+" successfully deleted.")
+    print("\n")
+    return event
 
 def main():
     api = get_calendar_api()
@@ -274,7 +265,12 @@ def main():
                 except ValueError:
                     print('\nInvalid index\n')
                 try:
-                    delete_event(api, index, eventNum)
+                    eventNum[int(index)]
+                except IndexError:
+                    print('\nInvalid index\n')
+                event = eventNum[int(index)]
+                try:
+                    delete_event(api, event)
                 except IndexError:
                     print('\nInvalid index\n')
 
