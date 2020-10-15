@@ -26,7 +26,6 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
-
 def get_calendar_api():
     """
     Get an object which allows you to consume the Google Calendar API.
