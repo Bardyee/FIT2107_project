@@ -236,8 +236,12 @@ def get_events_with_input(api):
         try:
             int(index_input)
         except ValueError:
-            print("Invalid index")
+            print("Invalid index\n")
+            break
         else:
+            if int(index_input)>=len(list_of_events):
+                print("Invalid index\n")
+                break
             for t_event in list_of_events:
                 if int(index_input) == t_event[0]:
                     event = events[int(index_input)]
