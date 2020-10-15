@@ -2,3 +2,7 @@ credentials.json
 token.pickle
 .vscode
 __pycache__
+.coverage
+GetAllEventsTest.py
+GetEventsWithInputTest.py
+GetKeyEventsTest.py
