@@ -98,7 +98,7 @@ def get_events_with_input(api):
     year=""
     month=""
     day=""
-    print("Leave empty if filter not needed")
+    print("\nLeave empty if filter not needed")
 
     while not validYear:
         print("Input year in YYYY format")
@@ -121,7 +121,7 @@ def get_events_with_input(api):
     while not validMonth:
         if year=="":
             break
-        print("Input year in MM format")
+        print("\nInput year in MM format")
         month = input("Filter month: ")
         if month=="":
             validMonth=True
@@ -141,7 +141,7 @@ def get_events_with_input(api):
     while not validDay:
         if month=="":
             break
-        print("Input year in DD format")
+        print("\nInput year in DD format")
         day = input("Filter day: ")
         if day=="":
             validDay=True
@@ -222,6 +222,7 @@ def get_events_with_input(api):
     while events:
         list_of_events = []
         index=0
+        print("\n")
         for event in events:
             one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
             list_of_events.append(one_event)
