@@ -87,6 +87,8 @@ def get_events_with_input(api, year, month="", day=""):
     """
     Gets all events from date specified
     """
+    if year=="":
+        raise ValueError
 
     if month=="":
         start_date = year + "-01-01"
@@ -127,6 +129,10 @@ def get_events_with_input(api, year, month="", day=""):
     return events
 
 def get_details_of_event(event):
+    """
+    Gets the details of an event
+    """
+    
     print("\n")
     print("event name: " + event['summary'])
     print("created: " + event['created'])
