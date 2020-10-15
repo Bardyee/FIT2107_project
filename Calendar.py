@@ -280,23 +280,44 @@ def get_events_with_keyword(api, keyword):
     return None
 
 def delete_event(api, name):
+    """
+    Deletes the first event found with the given keyword.
+    """
+    if not name:
+        raise KeyError("Name must not be empty.")
 
     events_results = api.events().list(calendarId='primary', singleEvents=True,
                                         orderBy='startTime').execute()
     
     event_list = events_results.get('items', [])
-    index = 0
-    eventNumber = ""
-    for event in event_list:
-        title = event['summary']
-        eventID = event['id']
-        if (name.lower() in title.lower()):
-            index +=1
-            eventNumber = eventID
+
+    while True:
+        print("\n")
+        index = 0
+        event_array = []
+        for event in event_list:
+            title = event['summary']
+            eventID = event['id']
+            if (name.lower() in title.lower()):
+                event_array.append([index, title, eventID])
+                index +=1
+                
+        if (index == 0):
+            print("No events with the given keyword were found.")
             break
-    api.events().delete(calendarId='primary', eventId=eventNumber).execute()
-    if (index == 0):
-        print("No events with the given keyword were found.")
+        for i in event_array:
+            print(i[0], i[1]) # Display the index and title of the event
+        delete_inp = input('Please select an index to be deleted, or enter "q" to quit: ')
+        if (delete_inp == "q"):
+            break
+        if (int(delete_inp) >= len(event_array)):
+            print("Invalid index!")
+            break
+        else:
+            api.events().delete(calendarId='primary', eventId=event_array[int(delete_inp)][2]).execute()
+            print("Event titled: "+event_array[int(delete_inp)][1]+" successfully deleted.")
+            break
+    
     print("\n")
     return None
 
@@ -328,7 +349,7 @@ def main():
         print("2: get all events")
         print("3: get events with user input")
         print("4: get events with keyword")
-        print("5: delete the first event with the given keyword")
+        print("5: get all events with keyword and select one to delete")
         print("q: quit the program")
         u_input = input("Input here: ")
 
