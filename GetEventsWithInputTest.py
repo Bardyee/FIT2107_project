@@ -7,19 +7,13 @@ import Calendar
 
 class CalendarTest(unittest.TestCase):
     # This test tests number of upcoming events.
-    @patch('Calendar.input', return_value="q")
     def test_get_events_with_input(self):
-        num_events = 1
         time = "2020-08-03T00:00:00.000000Z"
 
         mock_api = Mock()
         num_events = Calendar.get_events_with_input(mock_api)
 
-        # self.assertEqual(
-        #     mock_api.events.return_value.list.return_value.execute.return_value.get.call_count, 1)
-
-        # args, kwargs = mock_api.events.return_value.list.call_args_list[0]
-        # self.assertEqual(kwargs['maxResults'], num_events)
+        self.assertEqual(num_events, 0)
 
     # Add more test cases here
 
