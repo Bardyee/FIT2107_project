@@ -280,7 +280,7 @@ def get_events_with_keyword(api, keyword):
 
 def delete_event(api, name):
     """
-    Deletes the first event found with the given keyword.
+    Deletes event found with the given keyword.
     """
     # if not name:
     #     raise KeyError("Name must not be empty.")
