@@ -1,10 +1,6 @@
 import unittest
-<<<<<<< HEAD
 from unittest.mock import Mock
 from unittest.mock import MagicMock
-=======
-from unittest.mock import Mock, MagicMock
->>>>>>> bb6c59bbda05bb30246c632d8de5e02d9d1f6a3b
 import Calendar
 # Add other imports here if needed
 
@@ -154,7 +150,6 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2021-04-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2021-04-01T23:59:59Z")
 
-<<<<<<< HEAD
 class GetDetailsOfEventTest(unittest.TestCase):
     def test_get_details_of_event(self):
         mock_event = MagicMock()
@@ -164,9 +159,6 @@ class GetDetailsOfEventTest(unittest.TestCase):
         self.assertEqual(
             mock_event.events.return_value.list.return_value.execute.return_value.get.call_count, 0)
 
-
-
-=======
 class DeleteEventTest(unittest.TestCase):
     def test_delete_event(self):
         mock_api = MagicMock()
@@ -175,7 +167,6 @@ class DeleteEventTest(unittest.TestCase):
         event_deleted = Calendar.delete_event(mock_api, mock_events)
 
         self.assertTrue(event_deleted)
->>>>>>> bb6c59bbda05bb30246c632d8de5e02d9d1f6a3b
 
 def main():
     # Create the test suite from the cases above.
@@ -189,16 +180,11 @@ def main():
     suite = unittest.TestLoader().loadTestsFromTestCase(GetEventsWithInputTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
 
-<<<<<<< HEAD
     suite = unittest.TestLoader().loadTestsFromTestCase(GetDetailsOfEventTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
 
-
-
-=======
     suite = unittest.TestLoader().loadTestsFromTestCase(DeleteEventTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
->>>>>>> bb6c59bbda05bb30246c632d8de5e02d9d1f6a3b
 
 
 main()
