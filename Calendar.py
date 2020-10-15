@@ -155,16 +155,16 @@ def get_events_with_keyword(api, keyword):
         title = event['summary']
         eventID = event['id']
         if (keyword.lower() in title.lower()):
-            event_array.append([index, title, eventID])
+            event_array.append(event)
             index +=1
     if (index == 0):
         print("No events with the given keyword were found.\n")
         return None
     else:
-        for x in event_array:
-            print(x[0], x[1])
+        for x in range(len(event_array)):
+            print(x, event_array[x]['summary'])
         print("\n")
-        return ([index, event_array])
+        return (event_array)
 
 def delete_event(api, index, event_array):
     """
@@ -173,17 +173,16 @@ def delete_event(api, index, event_array):
     if((index == "") or (int(index) >= len(event_array))):
         raise IndexError("Invalid index")
     if (index == "q"):
-        return False
+        return []
     elif (int(index) >= len(event_array)):
         print("Invalid index!")
-        return False
+        return []
     else:
-        api.events().delete(calendarId='primary', eventId=event_array[int(index)][2]).execute()
-        print("Event titled: "+event_array[int(index)][1]+" successfully deleted.")
-        event_array.pop(int(index))
-        numOfKeyEvents = len(event_array)
+        api.events().delete(calendarId='primary', eventId=event_array[int(index)]['id']).execute()
+        print("Event titled: "+event_array[int(index)]['summary']+" successfully deleted.")
+        retVal = event_array.pop(int(index))
         print("\n")
-        return True
+        return retVal
 
 def main():
     api = get_calendar_api()
@@ -271,7 +270,11 @@ def main():
             if (eventNum is not None):
                 index = input("Select an index to delete: ")
                 try:
-                    delete_event(api, index, eventNum[1])
+                    int(index)
+                except ValueError:
+                    print('\nInvalid index\n')
+                try:
+                    delete_event(api, index, eventNum)
                 except IndexError:
                     print('\nInvalid index\n')
 
