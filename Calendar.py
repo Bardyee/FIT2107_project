@@ -275,11 +275,7 @@ def main():
                 except IndexError:
                     print('\nInvalid index\n')
                 event = eventNum[int(index)]
-                try:
-                    delete_event(api, event)
-                except IndexError:
-                    print('\nInvalid index\n')
-
+                delete_event(api, event)
 
         elif u_input == "q":
             print("shutting down program...")
