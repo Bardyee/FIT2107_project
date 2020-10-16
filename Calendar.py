@@ -222,18 +222,15 @@ def main():
             else:
                 list_of_events = []
                 index=0
-                print("\n")
                 for event in events:
                     print(index, event['summary'])
                     index+=1
-                index_input = input("Please input an index to see more details of an event")
+                index_input = input("Please input an index to see more details of an event: ")
                 try:
-                    int(index_input)
-                except ValueError:
+                    get_details_of_event(events[int(index_input)])
+                except:
                     print("invalid index")
-                else:
-                    if int(index_input) < len(list_of_events):
-                        get_details_of_event(events[int(index_input)])
+                    
 
         elif u_input == "4":
             key = input("Search for... ")
@@ -252,15 +249,12 @@ def main():
             if (eventNum is not None):
                 index = input("Select an index to delete: ")
                 try:
-                    int(index)
-                except ValueError:
-                    print('\nInvalid index\n')
-                try:
                     eventNum[int(index)]
-                except IndexError:
+                except:
                     print('\nInvalid index\n')
-                event = eventNum[int(index)]
-                delete_event(api, event)
+                else:
+                    event = eventNum[int(index)]
+                    delete_event(api, event)
 
         elif u_input == "q":
             print("shutting down program...")
