@@ -195,14 +195,7 @@ def main():
         print("\n")
 
     while running:
-        print("Menu:")
-        print("Select option by inputting the number assosiated with command")
-        print("1: get upcoming events")
-        print("2: get all events")
-        print("3: get events with user input")
-        print("4: get events with keyword")
-        print("5: get all events with keyword and select one to delete")
-        print("q: quit the program")
+        print("Menu:\nSelect option by inputting the number assosiated with command\n1: get upcoming events\n2: get all events\n3: get events with user input\n4: get events with keyword\n5: get all events with keyword and select one to delete\nq: quit the program\n")
         u_input = input("Input here: ")
 
         if u_input == "1":
@@ -227,28 +220,20 @@ def main():
             except:
                 print("Invalid input")
             else:
-                while events:
-                    list_of_events = []
-                    index=0
-                    print("\n")
-                    for event in events:
-                        one_event = (index, (event['start'].get('dateTime', event['start'].get('date')), event['summary']))
-                        list_of_events.append(one_event)
-                        print(one_event)
-                        index+=1
-
-                    print("Please input an index to see more details of an event, else input q to leave this page")
-                    index_input = input()
-                    if index_input == "q":
-                        break
-                    try:
-                        int(index_input)
-                    except ValueError:
-                        print("invalid index")
-                    else:
-                        if int(index_input) < len(list_of_events):
-                            get_details_of_event(events[int(index_input)])
-                            break
+                list_of_events = []
+                index=0
+                print("\n")
+                for event in events:
+                    print(index, event['summary'])
+                    index+=1
+                index_input = input("Please input an index to see more details of an event")
+                try:
+                    int(index_input)
+                except ValueError:
+                    print("invalid index")
+                else:
+                    if int(index_input) < len(list_of_events):
+                        get_details_of_event(events[int(index_input)])
 
         elif u_input == "4":
             key = input("Search for... ")
