@@ -21,7 +21,7 @@ Expected output: Console prints "Invalid input"\
 Real output: "Invalid input" printed\
 Result: Pass
 
-`2` - Gets 2 upcoming events, which at this time is "PASS S2, 2020- FIT2102 (Slot 4)".\
+`2` - Gets 2 upcoming events.\
 Expected output: 2 events\
 Real output: 2 events\
 Result: Pass
@@ -94,6 +94,7 @@ Year: `2021`\
 Month: `02`\
 Day: `01`
 
+Invalid inputs such as year = `str` or month = `53` or having days = `29` when year is not a leap year and month is febuary are handled in the main menu.
 
 <br><br>
 ### Test suite 4:
