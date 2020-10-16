@@ -21,10 +21,12 @@ Expected output: Console prints "Invalid input"\
 Real output: "Invalid input" printed\
 Result: Pass
 
-`1` - Gets 1 upcoming event, which at this time is "PASS S2, 2020- FIT2102 (Slot 4)".\
-Expected output: Console shows "PASS S2, 2020- FIT2102 (Slot 4)" event\
-Real output: "2020-10-22T12:00:00+08:00 PASS S2, 2020- FIT2102 (Slot 4)" printed\
+`2` - Gets 2 upcoming events, which at this time is "PASS S2, 2020- FIT2102 (Slot 4)".\
+Expected output: 2 events\
+Real output: 2 events\
 Result: Pass
+
+In the CalendarTest file, we assert that the timeMin must be the current time.
 
 <br><br>
 ### Test suite 2:
@@ -32,103 +34,65 @@ Description: To test that the user can get all events from at least 5 years ago 
 Test cases: \
 No inputs are required.
 
+In the CalendarTest file, we assert that the timeMin is 5 years ago and timeMax is 2 years later.
+
 <br><br>
 ### Test suite 3:
 Description: To test that the user can get events based on date given. \
 Test cases: 
 
 #### All inputs tested for year: 
-`0` - Year 0 is invalid\
-`10000` - Year 10000 is invalid\
-`a` - Input cannot be letters\
 `2020` - A leap year\
 `2022` - A non leap year\
 `    ` - Empty string
 
 #### All inputs tested for month:
-`0` - Month 0 is invalid\
-`13` - Month 13 is invalid\
-`a` - Input cannot be letters\
 `2` - Febuary which has 28/29 days\
 `4` - A month with 30 days\
 `5` - A month with 31 days\
-`    ` - Empty string
+`    ` - Empty string which will give a default value of starting time `01` and ending time `12`
 
 #### All inputs tested for days:
-`0` - Day 0 is invalid\
-`a` - Input cannot be letters\
-`29` - If month is Febuary and on a non leap year, it is invalid\
-`30` - If month is Febuary, it is invalid\
-`31` - If month is Febuary, April, June, September, November, it is invalid\
-`32` - It is invalid\
-`    ` - Empty string
-
-#### All inputs tested for index:
-`0` - Prints the details of the event with index 0\
-`q` - Exits the index selection menu\
-`a` - Invalid index\
-` ` - Empty string is an invalid index\
-`9999` - If index is out of bounds, console will print "invalid index"
+`1` - All months will have 1
+`    ` - Empty string which will give a default value of starting time `01` and ending time `28/29/30/31` depending on the month given
 
 All combinations are properly picked and tested to ensure full branch coverage.\
 The tested inputs combinations were:
 
 ### 1)
-Year: `0`\
-Year: `10000`\
-Year: `a`\
-Year: `""`
+Year: ` `\
+Month: `""`\
+Day: `""`
 
 ### 2)
-Year: `2022`\
-Month: `0`\
-Month: `13`\
-Month: `a`\
-Month: `""`\
-Index: `999`
+Year: `2020`\
+Month: `04`\
+Day: `""`
 
 ### 3)
-Year: `2022`\
-Month: `2`\
-Day: `a`\
-Day: `0`\
-Day: `29`\
-Day: `28`
+Year: `2020`\
+Month: `05`\
+Day: `""`
 
 ### 4)
-Year: `2022`\
-Month: `2`\
+Year: `2020`\
+Month: `04`\
 Day: `""`
 
 ### 5)
-Year: `2022`\
-Month: `4`\
-Day: `0`\
-Day: `31`\
+Year: `2020`\
+Month: `02`\
 Day: `""`
 
 ### 6)
-Year: `2022`\
-Month: `5`\
-Day: `0`\
-Day: `32`\
-Day: `""`\
-Index: `0`\
-Index: `q`
+Year: `2021`\
+Month: `02`\
+Day: `""`
 
 ### 7)
-Year: `2020`\
-Month: `2`\
-Day: `""`\
-Index: `""`
-
-### 7)
-Year: `2020`\
-Month: `2`\
-Day: `0`\
-Day: `30`\
-Day: `29`\
-Index: `a`
+Year: `2021`\
+Month: `02`\
+Day: `01`
 
 
 <br><br>

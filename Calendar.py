@@ -142,6 +142,7 @@ def get_details_of_event(event):
     print("end time: " + str(event['end']['dateTime']))
     print("reminders: " + str(event['reminders']))
     print("\n")
+    return event
 
 def get_events_with_keyword(api, keyword): 
     """

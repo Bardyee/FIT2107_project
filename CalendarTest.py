@@ -20,6 +20,7 @@ class CalendarTest(unittest.TestCase):
         args, kwargs = mock_api.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs['maxResults'], num_events)
 
+    # This test tests invalid number of upcoming events.
     def test_get_upcoming_events_number_error(self):
         num_events = 0
         time = "2020-08-03T00:00:00.000000Z"
@@ -59,13 +60,15 @@ class GetAllEventsTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMax'], "2022-08-03T00:00:00.000000Z")
 
 class GetEventsWithInputTest(unittest.TestCase):
-    # This test tests number of upcoming events.
+    # This test tests if year is empty.
     def test_get_events_with_input_empty(self):
         mock_api = Mock()
         with self.assertRaises(ValueError):
             events = Calendar.get_events_with_input(mock_api, "")
 
+    # This test tests if only year is present.
     def test_get_events_with_input_only_year(self):
+
         year = "2020"
 
         mock_api = Mock()
@@ -78,7 +81,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2020-01-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2020-12-31T23:59:59Z")
 
-
+    # This test tests if year and month with 31 days are present.
     def test_get_events_with_input_year_and_big_month(self):
         year = "2020"
         month = "05"
@@ -93,6 +96,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2020-05-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2020-05-31T23:59:59Z")
 
+    # This test tests if year and month with 30 days are present.
     def test_get_events_with_input_year_and_small_month(self):
         year = "2020"
         month = "04"
@@ -107,6 +111,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2020-04-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2020-04-30T23:59:59Z")
 
+    # This test tests if leap year and month Febuary are present.
     def test_get_events_with_input_leapyear_and_febuary(self):
         year = "2020"
         month = "02"
@@ -121,6 +126,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2020-02-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2020-02-29T23:59:59Z")
 
+    # This test tests if non-leap year and month Febuary are present.
     def test_get_events_with_input_nonleapyear_and_febuary(self):
         year = "2021"
         month = "02"
@@ -135,6 +141,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMin'], "2021-02-01T00:00:00Z")
         self.assertEqual(kwargs['timeMax'], "2021-02-28T23:59:59Z")
 
+    # This test tests if year and month and day are all present.
     def test_get_events_with_input_year_and_small_month_and_day(self):
         year = "2021"
         month = "04"
@@ -151,6 +158,7 @@ class GetEventsWithInputTest(unittest.TestCase):
         self.assertEqual(kwargs['timeMax'], "2021-04-01T23:59:59Z")
 
 class GetDetailsOfEventTest(unittest.TestCase):
+    # This test tests getting details of event
     def test_get_details_of_event(self):
         mock_event = MagicMock()
 
@@ -158,8 +166,10 @@ class GetDetailsOfEventTest(unittest.TestCase):
 
         self.assertEqual(
             mock_event.events.return_value.list.return_value.execute.return_value.get.call_count, 0)
+        self.assertEqual(events, mock_event)
 
 class DeleteEventTest(unittest.TestCase):
+    # This test tests deleting an event.
     def test_delete_event(self):
         mock_api = MagicMock()
         mock_events = MagicMock()
@@ -169,6 +179,7 @@ class DeleteEventTest(unittest.TestCase):
         self.assertTrue(event_deleted)
 
 class GetEventWithKeywordTest(unittest.TestCase):
+    # This test tests searching for an event with keyword.
     def test_get_event_with_keyword(self):
         mock_api = Mock()
         mock_api.events.return_value.list.return_value.execute.return_value = {
@@ -189,6 +200,7 @@ class GetEventWithKeywordTest(unittest.TestCase):
         self.assertIn("testSearch", found_events[0]["summary"])
         self.assertNotIn("testDontSeeThis", found_events[0]["summary"])
 
+    # This test tests searching for an event with invalid keyword.
     def test_get_event_with_invalid_keyword(self):
         mock_api = Mock()
         mock_api.events.return_value.list.return_value.execute.return_value = {
