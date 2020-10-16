@@ -168,6 +168,45 @@ class DeleteEventTest(unittest.TestCase):
 
         self.assertTrue(event_deleted)
 
+class GetEventWithKeywordTest(unittest.TestCase):
+    def test_get_event_with_keyword(self):
+        mock_api = Mock()
+        mock_api.events.return_value.list.return_value.execute.return_value = {
+            "items": [
+                {
+                    "summary": "testSearch",
+                    "id": "12345"
+                },
+                {
+                    "summary": "testDontSeeThis",
+                    "id": "24680"
+                }
+            ]
+        }
+
+        found_events = Calendar.get_events_with_keyword(mock_api, "Search")
+
+        self.assertIn("testSearch", found_events[0]["summary"])
+        self.assertNotIn("testDontSeeThis", found_events[0]["summary"])
+
+    def test_get_event_with_invalid_keyword(self):
+        mock_api = Mock()
+        mock_api.events.return_value.list.return_value.execute.return_value = {
+            "items": [
+                {
+                    "summary": "testSearch",
+                    "id": "12345"
+                }
+            ]
+        }
+
+        with self.assertRaises(KeyError):
+            found_events = Calendar.get_events_with_keyword(mock_api, "")
+
+        found_events = Calendar.get_events_with_keyword(mock_api, "noEvent")
+
+        self.assertEqual(found_events, None)
+
 def main():
     # Create the test suite from the cases above.
     suite = unittest.TestLoader().loadTestsFromTestCase(CalendarTest)
@@ -184,6 +223,9 @@ def main():
     unittest.TextTestRunner(verbosity=2).run(suite)
 
     suite = unittest.TestLoader().loadTestsFromTestCase(DeleteEventTest)
+    unittest.TextTestRunner(verbosity=2).run(suite)
+
+    suite = unittest.TestLoader().loadTestsFromTestCase(GetEventWithKeywordTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 
