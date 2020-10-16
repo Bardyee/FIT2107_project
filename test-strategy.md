@@ -100,48 +100,37 @@ Invalid inputs such as year = `str` or month = `53` or having days = `29` when y
 ### Test suite 4:
 Description: To test that the user can search for events using key words.\
 Test cases: \
-`    ` - Empty string to check if KeyError is raised.\
+<!-- `    ` - Empty string to check if KeyError is raised.\
 Expected output: Console prints "Invalid input"\
 Real output: "Invalid input" printed\
-Result: Pass
+Result: Pass -->
 
-`test` - Search for a premade "Test" event.\
-Expected output: Console shows "Test" event along with its index number\
-Real output: "0 Test"\
+`Search` - Search for a premade event labelled "testSearch".\
+Expected output: A list of events that contain the keyword "Search" is returned.\
+Real output: A list with one result event ( testSearch )\
 Result: Pass
 
 `noEvent` - Search for an event that wasnt created.\
-Expected output: Console shows that No event with the given name can be found\
-Real output: "No events with the given keyword were found."\
+Expected output: Nothing is returned, and a message prints to the console stating that no events with given keyword is found.\
+Real output: None was returned and "No events with the given keyword were found." is printed to the console.\
 Result: Pass
+
+Invalid keyword such as an empty string was handled in the main menu.
 
 <br><br>
 ### Test suite 5:
-Description: To test that the user can search for and then delete events using key words\
+Description: To test that the user can delete events from a list of events using index\
 Test Cases:\
-`test` - Search for a premade "Test" event.\
-Expected output: Console shows "Test" event along with its index number\
-Real output: "0 Test"\
-Result: Pass
 
-From here test that it deals with 3 types of inputs:\
-`0` - Selecting the correct index and deleting the task.\
+`mock_test` - Deleting an event with ID of "mock_test"\
 Output should print a message showing the success of deletion\
-`2` - Selecting an index that does not exist.\
-Output should print an Invalid Input message.\
-`q` - Discarding any changes and returning to previous terminal.\
-Console should return to asking for user input.\
-
-`noEvent` - Search for an event that wasnt created.\
-Expected output: Console shows that No event with the given name can be found\
-Real output: "No events with the given keyword were found."\
+Expected output: A success message printed to console and the method returns the deleted event object.
+Real output: Success message was printed and method returned the deleted event object
 Result: Pass
 
-`    ` - Empty string to check if KeyError is raised.\
-Expected output: Console prints "Invalid input"\
-Real output: "Invalid input" printed\
-Result: Pass
+Invalid indices like an empty string or an index out of bounds was handled in the main menu.
 
+<br><br>
 ### Test suite 6:
 Description: To test the menu\
 Test Cases:
